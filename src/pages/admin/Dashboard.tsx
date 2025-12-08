@@ -11,6 +11,9 @@ import {
 import ApplicationReview from './ApplicationReview';
 import SupportTickets from './SupportTickets';
 import TicketView from '../TicketView';
+import DocumentConfig from './DocumentConfig';
+import Universities from './Universities';
+import Students from './Students';
 
 function AdminSidebar() {
   const location = useLocation();
@@ -440,18 +443,18 @@ export default function AdminDashboard() {
         <AdminHeader />
         <Routes>
           <Route path="/" element={<DashboardHome />} />
-          <Route path="/applications" element={<ApplicationsList />} />
-          <Route path="/applications/:applicationId" element={<ApplicationReview />} />
-          <Route path="/documents" element={<div className="p-6"><h1 className="text-2xl font-bold">Document Configuration</h1></div>} />
-          <Route path="/universities" element={<div className="p-6"><h1 className="text-2xl font-bold">Universities</h1></div>} />
-          <Route path="/students" element={<div className="p-6"><h1 className="text-2xl font-bold">Students</h1></div>} />
-          <Route path="/payments" element={<div className="p-6"><h1 className="text-2xl font-bold">Payments</h1></div>} />
-          <Route path="/refunds" element={<div className="p-6"><h1 className="text-2xl font-bold">Refunds</h1></div>} />
-          <Route path="/tickets" element={<SupportTickets />} />
-          <Route path="/tickets/:ticketId" element={<TicketView />} />
-          <Route path="/faqs" element={<div className="p-6"><h1 className="text-2xl font-bold">FAQs</h1></div>} />
-          <Route path="/analytics" element={<div className="p-6"><h1 className="text-2xl font-bold">Analytics</h1></div>} />
-          <Route path="/settings" element={<div className="p-6"><h1 className="text-2xl font-bold">Settings</h1></div>} />
+          <Route path="applications" element={<ApplicationsList />} />
+          <Route path="applications/:applicationId" element={<ApplicationReview />} />
+          <Route path="documents" element={<DocumentConfig />} />
+          <Route path="universities" element={<Universities />} />
+          <Route path="students" element={<Students />} />
+          <Route path="payments" element={<div className="p-6"><h1 className="text-2xl font-bold">Payments</h1></div>} />
+          <Route path="refunds" element={<div className="p-6"><h1 className="text-2xl font-bold">Refunds</h1></div>} />
+          <Route path="tickets" element={<SupportTickets />} />
+          <Route path="tickets/:ticketId" element={<TicketView />} />
+          <Route path="faqs" element={<div className="p-6"><h1 className="text-2xl font-bold">FAQs</h1></div>} />
+          <Route path="analytics" element={<div className="p-6"><h1 className="text-2xl font-bold">Analytics</h1></div>} />
+          <Route path="settings" element={<div className="p-6"><h1 className="text-2xl font-bold">Settings</h1></div>} />
         </Routes>
       </div>
     </div>
