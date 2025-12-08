@@ -4,6 +4,8 @@ import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../lib/supabase';
 import { Home, FileText, Upload, CreditCard, MessageSquare, HelpCircle, GraduationCap, Bell, User, Plus, ChevronRight } from 'lucide-react';
 import CreateApplication from './CreateApplication';
+import Support from './Support';
+import TicketView from '../TicketView';
 
 function StudentSidebar() {
   const location = useLocation();
@@ -310,7 +312,8 @@ export default function StudentDashboard() {
           <Route path="/applications/create/:universityId" element={<CreateApplication />} />
           <Route path="/documents" element={<div className="p-6"><h1 className="text-2xl font-bold">Documents</h1></div>} />
           <Route path="/payments" element={<div className="p-6"><h1 className="text-2xl font-bold">Payments</h1></div>} />
-          <Route path="/support" element={<div className="p-6"><h1 className="text-2xl font-bold">Support</h1></div>} />
+          <Route path="/support" element={<Support />} />
+          <Route path="/support/:ticketId" element={<TicketView />} />
           <Route path="/faqs" element={<div className="p-6"><h1 className="text-2xl font-bold">FAQs</h1></div>} />
         </Routes>
       </div>

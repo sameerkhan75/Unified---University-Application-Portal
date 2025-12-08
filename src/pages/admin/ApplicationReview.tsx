@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import {
   ArrowLeft, CheckCircle, XCircle, AlertCircle, FileText,
-  User, GraduationCap, Calendar, Clock, Save
+  User, GraduationCap, Calendar, Clock, Save, X
 } from 'lucide-react';
 
 interface Application {
@@ -136,22 +136,36 @@ export default function ApplicationReview() {
     }
   };
 
-  const handleVerifyDocument = async (docId: string, status: 'verified' | 'rejected') => {
+  const [docModalOpen, setDocModalOpen] = useState(false);
+  const [selectedDoc, setSelectedDoc] = useState<string | null>(null);
+  const [docRejectionNote, setDocRejectionNote] = useState('');
+
+  const handleVerifyDocument = async (docId: string, status: 'verified' | 'rejected', note?: string) => {
     await supabase
       .from('application_documents')
       .update({
         status,
         verified_at: new Date().toISOString(),
+        admin_notes: note || null,
       })
       .eq('id', docId);
 
     setDocuments(docs =>
       docs.map(doc =>
         doc.id === docId
-          ? { ...doc, status, verified_at: new Date().toISOString() }
+          ? { ...doc, status, verified_at: new Date().toISOString(), admin_notes: note || null }
           : doc
       )
     );
+
+    setDocModalOpen(false);
+    setSelectedDoc(null);
+    setDocRejectionNote('');
+  };
+
+  const openRejectModal = (docId: string) => {
+    setSelectedDoc(docId);
+    setDocModalOpen(true);
   };
 
   if (loading) {
@@ -390,6 +404,13 @@ export default function ApplicationReview() {
                       </div>
                     </div>
 
+                    {doc.admin_notes && (
+                      <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded text-xs">
+                        <p className="font-medium text-red-700">Admin Note:</p>
+                        <p className="text-red-600">{doc.admin_notes}</p>
+                      </div>
+                    )}
+
                     <div className="flex gap-2 mt-3">
                       <a
                         href={doc.file_url}
@@ -408,7 +429,7 @@ export default function ApplicationReview() {
                             Verify
                           </button>
                           <button
-                            onClick={() => handleVerifyDocument(doc.id, 'rejected')}
+                            onClick={() => openRejectModal(doc.id)}
                             className="px-3 py-1 text-sm bg-red-100 text-red-700 rounded hover:bg-red-200"
                           >
                             Reject
@@ -509,6 +530,62 @@ export default function ApplicationReview() {
           </div>
         </div>
       </div>
+
+      {docModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl max-w-md w-full">
+            <div className="p-6 border-b border-slate-200 flex justify-between items-center">
+              <h2 className="text-xl font-bold text-slate-900">Reject Document</h2>
+              <button
+                onClick={() => {
+                  setDocModalOpen(false);
+                  setSelectedDoc(null);
+                  setDocRejectionNote('');
+                }}
+                className="p-2 hover:bg-slate-100 rounded-lg"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Reason for Rejection <span className="text-red-500">*</span>
+                </label>
+                <textarea
+                  value={docRejectionNote}
+                  onChange={(e) => setDocRejectionNote(e.target.value)}
+                  rows={4}
+                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  placeholder="Explain why this document is being rejected..."
+                  required
+                />
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    setDocModalOpen(false);
+                    setSelectedDoc(null);
+                    setDocRejectionNote('');
+                  }}
+                  className="flex-1 px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => selectedDoc && handleVerifyDocument(selectedDoc, 'rejected', docRejectionNote)}
+                  disabled={!docRejectionNote.trim()}
+                  className="flex-1 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 disabled:opacity-50"
+                >
+                  Reject Document
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
