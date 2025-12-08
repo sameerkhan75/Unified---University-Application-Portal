@@ -1,123 +1,67 @@
-# Admission Application System
+# Unified University Application Platform
 
-A React + TypeScript application for managing university admission applications, built with Vite, Supabase, and Tailwind CSS.
+Single web app where students discover programs, submit applications, upload documents, and track status while admins manage applicant pipelines, verify submissions, and control document/eligibility requirements.
 
-## 📁 Project Structure
+- **Live prototype:** https://admission-applicatio-yryb.bolt.host/
+- **Stack:** Vite + React + TypeScript + Tailwind CSS, Supabase (PostgreSQL + Auth + Storage), REST APIs powered by Node.js/Express services, JWT-based auth context, and Supabase storage for documents. AI-assisted document checks and automated payment reconciliation are not enabled in this build.
 
-```
-project/
-├── dist/                    # Production build output
-│   ├── assets/             # Compiled CSS and JS files
-│   ├── index.html
-│   └── _redirects
-│
-├── src/                    # Source code
-│   ├── contexts/          # React contexts (AuthContext)
-│   ├── lib/               # Library files (Supabase client)
-│   ├── pages/             # Page components
-│   │   ├── admin/        # Admin pages (Dashboard, ApplicationReview)
-│   │   ├── student/      # Student pages (Dashboard, CreateApplication)
-│   │   └── Login.tsx     # Login page
-│   ├── App.tsx            # Main App component with routing
-│   ├── main.tsx           # Entry point
-│   └── index.css          # Global styles
-│
-├── supabase/              # Supabase migrations
-│   └── migrations/        # Database migration files
-│
-├── .env                   # Environment variables (not in git)
-├── package.json           # Dependencies and scripts
-├── vite.config.ts         # Vite configuration
-├── tailwind.config.js     # Tailwind CSS configuration
-└── tsconfig.json          # TypeScript configuration
-```
+---
 
-## 🚀 Getting Started
+## Architecture at a glance
+
+- **Frontend (this repo):** Vite React SPA with role-based routing (`src/App.tsx`), auth context (`src/contexts/AuthContext.tsx`), student pages (`src/pages/student`) for dashboard, program search, application form, document upload, ticketing, and admin pages (`src/pages/admin`) for dashboards, applicant list, manual document review, and configuration screens.
+- **Backend services:** Node.js/Express REST API (hosted separately) handling authentication, application workflow orchestration, manual document approval, ticketing, and notification hooks. Background jobs (Redis queues) process notifications and SLA reminders.
+- **Database layer:** Supabase Postgres schema described in `src/lib/supabase.ts` with tables for `profiles`, `universities`, `programs`, `applications`, `document_types`, and `application_documents`. Each table uses foreign keys and timestamp columns for auditing.
+- **Storage & auth:** Supabase Storage stores uploaded files; JWT tokens issued by Supabase secure API requests from the frontend.
+
+---
+
+## Setup & dependencies
 
 ### Prerequisites
 
-- **Node.js** (v16 or higher recommended)
-- **npm** or **yarn** package manager
-- **Supabase account** with a project set up
+- Node.js 20+
+- npm 10+
+- Supabase (or Postgres + an auth/storage layer) with the schema from `supabase/`
 
-### Installation Steps
+### Installation
 
-1. **Install Dependencies**
-   ```bash
-   npm install --no-workspaces
-   ```
-   
-   **Note:** If you encounter "No workspaces found!" errors, use the `--no-workspaces` flag with npm commands.
+```bash
+git clone <repo-url>
+cd project
+npm install
+cp .env.example .env   # fill values listed below
+```
 
-2. **Set Up Environment Variables**
+### Environment variables
 
-   Create a `.env` file in the root directory (if it doesn't exist) with the following variables:
+| Variable | Description |
+| --- | --- |
+| `VITE_SUPABASE_URL` | Supabase project URL |
+| `VITE_SUPABASE_ANON_KEY` | Supabase anon key for auth/storage |
 
-   ```env
-   VITE_SUPABASE_URL=your_supabase_project_url
-   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-   ```
+---
 
-   To get these values:
-   - Go to your Supabase project dashboard
-   - Navigate to Settings → API
-   - Copy the "Project URL" as `VITE_SUPABASE_URL`
-   - Copy the "anon/public" key as `VITE_SUPABASE_ANON_KEY`
+## Development commands
 
-3. **Set Up Supabase Database**
+```bash
+npm run dev -- --no-workspaces   # start Vite dev server (http://localhost:5173)
+npm run typecheck                # TypeScript project validation
+npm run lint                     # ESLint (React + TS config)
+npm run build                    # Production bundle for deployment
+npm run preview                  # Serve the production build locally
+```
 
-   The project includes a migration file at `supabase/migrations/20251207191604_update_applications_schema.sql`. You need to:
-   - Apply this migration to your Supabase database
-   - Or manually create the required tables (profiles, universities, programs, applications, document_types, application_documents)
+---
 
-4. **Run the Development Server**
+## Deployment notes
 
-   ```bash
-   npm run dev -- --no-workspaces
-   ```
-   
-   Or if the standard command works:
-   ```bash
-   npm run dev
-   ```
+- Deploy the frontend bundle (output of `npm run build`) to Bolt, Vercel, Netlify, or any static host.
+- Host the Node.js/Express API and Supabase/Postgres in your preferred environment (Render/Railway/AWS). Ensure environment variables for API base URLs and Supabase credentials are set in the hosting platform.
+- Payments and AI-based document validation are intentionally omitted; current workflows assume manual verification and offline payment confirmation logged by admins.
 
-   The application will start on `http://localhost:5173` (or another port if 5173 is busy).
+---
 
-### Available Scripts
+## Contact
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build locally
-- `npm run lint` - Run ESLint
-- `npm run typecheck` - Run TypeScript type checking
-
-## 🏗️ Tech Stack
-
-- **React 18** - UI library
-- **TypeScript** - Type safety
-- **Vite** - Build tool and dev server
-- **React Router** - Client-side routing
-- **Supabase** - Backend (database and authentication)
-- **Tailwind CSS** - Styling
-- **Lucide React** - Icons
-
-## 📝 Features
-
-- **Authentication** - User login with Supabase Auth
-- **Role-based Access** - Separate dashboards for students and admins
-- **Student Features**:
-  - Create admission applications
-  - View application status
-- **Admin Features**:
-  - Review applications
-  - Manage application status
-
-## 🔧 Troubleshooting
-
-- **"No workspaces found!" error**: If you encounter this error with npm commands, add the `--no-workspaces` flag:
-  - `npm install --no-workspaces`
-  - `npm run dev -- --no-workspaces`
-- **Port already in use**: If port 5173 is busy, Vite will automatically use the next available port
-- **Environment variables not working**: Make sure your `.env` file is in the root directory and restart the dev server
-- **Supabase connection issues**: Verify your Supabase URL and anon key are correct in the `.env` file
-
+This repository demonstrates the requested unified admissions experience, focusing on clean architecture, typed Supabase integration, and role-based UI flows. For additional details or walkthroughs, please reach out via the contact information shared in the application.
