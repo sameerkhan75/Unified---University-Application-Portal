@@ -308,13 +308,13 @@ export default function StudentDashboard() {
         <StudentHeader />
         <Routes>
           <Route path="/" element={<DashboardHome />} />
-          <Route path="/applications" element={<Applications />} />
-          <Route path="/applications/create/:universityId" element={<CreateApplication />} />
-          <Route path="/documents" element={<div className="p-6"><h1 className="text-2xl font-bold">Documents</h1></div>} />
-          <Route path="/payments" element={<div className="p-6"><h1 className="text-2xl font-bold">Payments</h1></div>} />
-          <Route path="/support" element={<Support />} />
-          <Route path="/support/:ticketId" element={<TicketView />} />
-          <Route path="/faqs" element={<div className="p-6"><h1 className="text-2xl font-bold">FAQs</h1></div>} />
+          <Route path="applications" element={<Applications />} />
+          <Route path="applications/create/:universityId" element={<CreateApplication />} />
+          <Route path="documents" element={<div className="p-6"><h1 className="text-2xl font-bold">Documents</h1></div>} />
+          <Route path="payments" element={<div className="p-6"><h1 className="text-2xl font-bold">Payments</h1></div>} />
+          <Route path="support" element={<Support />} />
+          <Route path="support/:ticketId" element={<TicketView />} />
+          <Route path="faqs" element={<div className="p-6"><h1 className="text-2xl font-bold">FAQs</h1></div>} />
         </Routes>
       </div>
     </div>
